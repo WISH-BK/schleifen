@@ -457,7 +457,7 @@ footer{color:var(--muted);font-size:.82rem;margin-top:40px;border-top:1px solid 
     <p><b>Zwischenstand speichern</b> (zum Weiterarbeiten): Beim ersten Mal wählen Sie den Speicherort. Danach wird <b>immer dieselbe Datei überschrieben</b>, auch automatisch nach Änderungen. In der nächsten Stunde klicken Sie zuerst auf <b>Stand laden</b>. Am selben Computer wählen Sie dann <b>Diese Datei laden</b>, an einem anderen wählen Sie die Datei aus.</p>
     <p class="muted">Dieser Browser merkt sich Ihren Fortschritt und die Speicherdatei zusätzlich. An gemeinsam genutzten Computern prüfen Sie Dateiname und Name, bevor Sie in eine gemerkte Datei speichern.</p>
     <div class="btns"><button class="b primary" type="button" data-save>Stand speichern</button><button class="b" type="button" data-load>Stand laden</button></div>
-    <p><b>Bericht als PDF</b> (zum Abgeben): Er enthält die Aufgaben mit Ihren Antworten und Ihrem Code.</p>
+    <p><b>Bericht als PDF</b> (zum Nachlesen und Wiederholen): Er enthält das Merkwissen und die Aufgaben mit Ihren Antworten, bestandenen Programmen und Erklärungen. Angesehene Musterlösungen stehen am Ende.</p>
     <div class="btns"><button class="b primary" type="button" id="opensave2">Als PDF speichern &hellip;</button></div>
   </section>
   <footer>Aufgaben und Animationen: eigenes Unterrichtsmaterial. Python-Ausführung im Browser: Skulpt (skulpt.org), in diese Datei eingebettet.</footer>
@@ -560,7 +560,7 @@ while <span class="cc">zaehler &lt; 3</span>:
       <li>Nach <code>for</code> steht die <b>Schleifenvariable</b>. Den Namen wählen Sie selbst.</li>
       <li>Das Wort <b><code>in</code></b> gehört dazu, danach folgt <code>range(...)</code>.</li>
       <li>Am Ende steht ein <b>Doppelpunkt <code>:</code></b>, der Rumpf ist <b>eingerückt</b>.</li>
-      <li><b>Kein</b> Startwert davor und <b>keine</b> Erhöhung im Rumpf: Das erledigt die for-Schleife.</li>
+      <li><b>Für die Schleifenvariable</b> gilt: <b>kein</b> Startwert davor und <b>keine</b> Erhöhung im Rumpf. Beides erledigt die for-Schleife.</li>
     </ol>
   </section>
 </div>
@@ -1799,10 +1799,10 @@ function rangeEndFb(v, startValue, first, last, thing){
 /* ---------------- Aufgaben ---------------- */
 
 const T_WHILE = { re:"^\\s*while\\b[^\\n]*:", flags:"m", msg:"Verwenden Sie eine while-Schleife. Die Zeile beginnt mit while und endet mit einem Doppelpunkt." };
-const T_FOR = { re:"^\\s*for\\s+\\w+\\s+in\\s+range\\s*\\([^\\n]*:", flags:"m", msg:"Verwenden Sie eine for-Schleife mit range, zum Beispiel: for nummer in range(...):" };
+const T_FOR = { re:"^\\s*for\\s+[\\wäöüÄÖÜß]+\\s+in\\s+range\\s*\\([^\\n]*:", flags:"m", msg:"Verwenden Sie eine for-Schleife mit range, zum Beispiel: for nummer in range(...):" };
 const onePrint = n => ({ re:"\\bprint\\s*\\(", max:n || 1, msg:"Zu viele print-Anweisungen (erlaubt: " + (n || 1) + "). Die Wiederholung übernimmt die Schleife: Ein print im Rumpf gilt für alle Durchläufe." });
 const REQ_INPUT = "Fragen gehören in <code>input(\"…\")</code>, nicht in ein eigenes print.";
-const T_LOOP = { re:"^\\s*(while\\b|for\\s+\\w+\\s+in\\s+range\\s*\\()[^\\n]*:", flags:"m", msg:"Verwenden Sie eine Schleife: while oder for mit range. Mit einzelnen print-Zeilen funktioniert das Programm nur für eine bestimmte Eingabe." };
+const T_LOOP = { re:"^\\s*(while\\b|for\\s+[\\wäöüÄÖÜß]+\\s+in\\s+range\\s*\\()[^\\n]*:", flags:"m", msg:"Verwenden Sie eine Schleife: while oder for mit range. Mit einzelnen print-Zeilen funktioniert das Programm nur für eine bestimmte Eingabe." };
 const noWhile = { re:"\\bwhile\\b", max:0, msg:"In dieser Aufgabe soll keine while-Schleife mehr vorkommen. Verwenden Sie for und range." };
 const seq = (n, f) => Array.from({ length:n }, (_, i) => f(i));
 
@@ -1865,7 +1865,7 @@ const TASKS = [
 },
 { id:"A6", stage:"A", type:"code", title:"Das Wartezimmer",
   prompt:'Im Bürgeramt werden die Wartenummern <b>41 bis 47</b> aufgerufen. Geben Sie jeden Aufruf in einer Zeile aus. Verwenden Sie eine while-Schleife mit nur <b>einer</b> print-Anweisung.<div class="io"><div><b>So soll es aussehen</b><pre class="code">Nummer 41 bitte\nNummer 42 bitte\n...\nNummer 47 bitte</pre></div></div>',
-  req:["Die erste Zeile bleibt stehen. Getestet wird auch mit einer <b>anderen ersten Nummer</b>."],
+  req:["Die erste Zeile bleibt stehen. Getestet wird auch mit einer <b>anderen ersten Nummer</b>. Die letzte Nummer ist immer <b>47</b>."],
   starter:'nummer = 41\n# Schreiben Sie hier die while-Schleife\n',
   tests:[
     { label:"Nummern 41 bis 47", inputs:[], must:[T_WHILE], count:[onePrint()], lines:seq(7, i => "Nummer " + (41 + i) + " bitte") },
@@ -1881,7 +1881,7 @@ const TASKS = [
   solution:'nummer = 41\nwhile nummer <= 47:\n    print("Nummer", nummer, "bitte")\n    nummer = nummer + 1'
 },
 { id:"A7", stage:"A", type:"code", title:"Fehler finden: Das Programm hört nicht auf",
-  prompt:'Beim Pfandsammeln soll nach jeder Flasche der Stand erscheinen, bis 100 Cent erreicht sind. Führen Sie das Programm zuerst aus und beobachten Sie, was passiert. (Keine Sorge: Die Seite bricht Endlosschleifen automatisch ab.) Korrigieren Sie dann den Fehler.<div class="io"><div><b>So soll es aussehen</b><pre class="code">Pfand: 0 Cent\nPfand: 25 Cent\nPfand: 50 Cent\nPfand: 75 Cent\nZiel erreicht</pre></div></div>',
+  prompt:'Beim Pfandsammeln gilt: Solange noch keine 100 Cent gesammelt sind, soll vor jeder weiteren Flasche der aktuelle Stand erscheinen. Danach folgt die Meldung <b>Ziel erreicht</b>. Führen Sie das Programm zuerst aus und beobachten Sie, was passiert. (Keine Sorge: Die Seite bricht Endlosschleifen automatisch ab.) Korrigieren Sie dann den Fehler.<div class="io"><div><b>So soll es aussehen</b><pre class="code">Pfand: 0 Cent\nPfand: 25 Cent\nPfand: 50 Cent\nPfand: 75 Cent\nZiel erreicht</pre></div></div>',
   starter:'pfand = 0\nwhile pfand < 100:\n    print("Pfand:", pfand, "Cent")\nprint("Ziel erreicht")\npfand = pfand + 25\n',
   tests:[{ label:"Stand bis 75 Cent, dann Ziel erreicht", inputs:[], must:[T_WHILE], count:[onePrint(2)], lines:[...seq(4, i => "Pfand: " + i * 25 + " Cent"), "Ziel erreicht"] }],
   hints:[
@@ -1984,7 +1984,7 @@ const TASKS = [
   explain:"wert durchläuft 2, 4, 8, 16, 32. Geprüft wird immer vor dem Durchlauf, deshalb darf wert am Ende über der Grenze liegen."
 },
 { id:"P2", stage:"P", type:"code", title:"Summe bis zur Endzahl",
-  prompt:'Das Programm liest mit <code>input</code> eine ganze Zahl in die Variable <code>endzahl</code> ein und berechnet die Summe aller Zahlen <b>von 1 bis zur Endzahl</b>. Für 5 (also 1 + 2 + 3 + 4 + 5) lautet die Ausgabe: <code>Summe: 15</code>.<br>Neu ist die <b>Sammelvariable</b>: Sie legen vor der Schleife <code>summe = 0</code> an und addieren in jedem Durchlauf die aktuelle Zahl dazu.',
+  prompt:'Das Programm liest mit <code>input</code> eine ganze Zahl in die Variable <code>endzahl</code> ein und berechnet die Summe aller Zahlen <b>von 1 bis zur Endzahl</b>. Für 5 (also 1 + 2 + 3 + 4 + 5) lautet die Ausgabe: <code>Summe: 15</code>. Verwenden Sie eine <b>while-Schleife</b>.<br>Neu ist die <b>Sammelvariable</b>: Sie legen vor der Schleife <code>summe = 0</code> an und addieren in jedem Durchlauf die aktuelle Zahl dazu.',
   starter:'',
   tests:[
     { label:"Endzahl 5", question:true, sumLine:"Summe:", inputs:["5"], must:[T_WHILE], lines:["Summe: 15"] },
@@ -2001,7 +2001,7 @@ const TASKS = [
   solution:'endzahl = int(input("Endzahl: "))\nsumme = 0\nzahl = 1\nwhile zahl <= endzahl:\n    summe = summe + zahl\n    zahl = zahl + 1\nprint("Summe:", summe)'
 },
 { id:"P3", stage:"P", type:"code", title:"Einmaleins-Reihe",
-  prompt:'Das Programm fragt mit <code>input</code> eine Zahl <b>zwischen 1 und 10</b> ab und gibt dazu die Reihe aus dem kleinen Einmaleins aus.<div class="io"><div><b>Beispiel: Ausgabe zur Eingabe 7</b><pre class="code">1 x 7 = 7\n2 x 7 = 14\n...\n10 x 7 = 70</pre></div></div>',
+  prompt:'Das Programm fragt mit <code>input</code> eine Zahl <b>zwischen 1 und 10</b> ab und gibt dazu die Reihe aus dem kleinen Einmaleins aus. Verwenden Sie eine <b>while-Schleife</b>.<div class="io"><div><b>Beispiel: Ausgabe zur Eingabe 7</b><pre class="code">1 x 7 = 7\n2 x 7 = 14\n...\n10 x 7 = 70</pre></div></div>',
   starter:'',
   tests:[
     { label:"Reihe der 7", inputs:["7"], question:true, must:[T_WHILE], lines:seq(10, i => (i+1) + " x 7 = " + (i+1)*7) },
@@ -2017,7 +2017,7 @@ const TASKS = [
   solution:'zahl = int(input("Welche Reihe? "))\nfaktor = 1\nwhile faktor <= 10:\n    print(faktor, "x", zahl, "=", faktor * zahl)\n    faktor = faktor + 1'
 },
 { id:"P4", stage:"P", type:"code", title:"Sparplan",
-  prompt:'Ein Guthaben wird jedes Jahr verzinst. Nach wie vielen Jahren ist das Sparziel erreicht? Die Anzahl der Durchläufe kennen Sie vorher nicht.<br>Ausgabe bei den vorgegebenen Werten:<pre class="code">Jahre: 9\nKapital: 1551.33</pre>Runden Sie das Kapital erst bei der Ausgabe mit <code>round(kapital, 2)</code> auf zwei Nachkommastellen. Die ersten drei Zeilen bleiben stehen; getestet wird auch mit anderen Werten.',
+  prompt:'Ein Guthaben wird jedes Jahr verzinst. Nach wie vielen Jahren ist das Sparziel erreicht? Die Anzahl der Durchläufe kennen Sie vorher nicht. Verwenden Sie eine <b>while-Schleife</b>.<br>Ausgabe bei den vorgegebenen Werten:<pre class="code">Jahre: 9\nKapital: 1551.33</pre>Runden Sie das Kapital erst bei der Ausgabe mit <code>round(kapital, 2)</code> auf zwei Nachkommastellen. Die ersten drei Zeilen bleiben stehen; getestet wird auch mit anderen Werten.',
   req:["Die ersten drei Zeilen bleiben stehen. Getestet wird auch mit <b>anderen Werten</b>."],
   starter:'kapital = 1000\nzinssatz = 0.05\nziel = 1500\n',
   tests:[
@@ -2033,7 +2033,7 @@ const TASKS = [
   solution:'kapital = 1000\nzinssatz = 0.05\nziel = 1500\njahre = 0\nwhile kapital < ziel:\n    kapital = kapital + kapital * zinssatz\n    jahre = jahre + 1\nprint("Jahre:", jahre)\nprint("Kapital:", round(kapital, 2))'
 },
 { id:"P5", stage:"P", type:"code", title:"Die Kasse",
-  prompt:'Schreiben Sie ein Kassenprogramm:<ol><li>Es fragt nacheinander die Preise der Artikel ab. Wie viele es werden, steht vorher nicht fest.</li><li>Die Eingabe <b>0</b> bedeutet: Der Einkauf ist beendet. Die 0 ist kein Artikel.</li><li>Danach gibt es aus, <b>wie viele</b> Artikel gekauft wurden und was sie <b>zusammen</b> kosten.</li></ol><div class="io"><div><b>Eingaben nacheinander</b><pre class="code">2.5\n4\n1\n0</pre></div><div><b>Ausgabe am Ende</b><pre class="code">Anzahl: 3\nSumme: 7.5</pre></div></div>Preise sind Kommazahlen mit Punkt. Neu ist der Vergleich <code>!=</code>, er bedeutet „ungleich“.',
+  prompt:'Schreiben Sie mit einer <b>while-Schleife</b> ein Kassenprogramm:<ol><li>Es fragt nacheinander die Preise der Artikel ab. Wie viele es werden, steht vorher nicht fest.</li><li>Die Eingabe <b>0</b> bedeutet: Der Einkauf ist beendet. Die 0 ist kein Artikel.</li><li>Danach gibt es aus, <b>wie viele</b> Artikel gekauft wurden und was sie <b>zusammen</b> kosten.</li></ol><div class="io"><div><b>Eingaben nacheinander</b><pre class="code">2.5\n4\n1\n0</pre></div><div><b>Ausgabe am Ende</b><pre class="code">Anzahl: 3\nSumme: 7.5</pre></div></div>Preise sind Kommazahlen mit Punkt. Neu ist der Vergleich <code>!=</code>, er bedeutet „ungleich“.',
   starter:'summe = 0\nanzahl = 0\n',
   tests:[
     { label:"Eingaben 2.5, 4, 1, 0", question:true, inputs:["2.5","4","1","0"], must:[T_WHILE], lines:["Anzahl: 3","Summe: 7.5"] },
@@ -2259,7 +2259,7 @@ const TASKS = [
 
 /* ================= W: Weitere Übungsaufgaben ================= */
 { id:"W1", stage:"W", type:"code", title:"Der Energydrink",
-  prompt:'Die Menge an Koffein im Körper <b>halbiert sich</b> ungefähr alle 5 Stunden. Das Programm fragt mit <code>input</code> <b>zuerst die Koffeinmenge</b> in mg (auch mit Nachkommastellen) und <b>danach die Anzahl der Halbierungen</b> ab, die angezeigt werden sollen.<div class="io"><div><b>Eingaben nacheinander</b><pre class="code">80\n3</pre></div><div><b>Ausgabe</b><pre class="code">Stunden: 5 Koffein: 40.0 mg\nStunden: 10 Koffein: 20.0 mg\nStunden: 15 Koffein: 10.0 mg</pre></div></div>',
+  prompt:'Die Menge an Koffein im Körper <b>halbiert sich</b> ungefähr alle 5 Stunden. Das Programm fragt mit <code>input</code> <b>zuerst die Koffeinmenge</b> in mg (auch mit Nachkommastellen) und <b>danach die Anzahl der Halbierungen</b> ab, die angezeigt werden sollen. Runden Sie die Werte nicht.<div class="io"><div><b>Eingaben nacheinander</b><pre class="code">80\n3</pre></div><div><b>Ausgabe</b><pre class="code">Stunden: 5 Koffein: 40.0 mg\nStunden: 10 Koffein: 20.0 mg\nStunden: 15 Koffein: 10.0 mg</pre></div></div>',
   starter:'',
   tests:[
     { label:"80 mg, 3 Halbierungen", inputs:["80","3"], question:true, must:[T_LOOP], lines:["Stunden: 5 Koffein: 40.0 mg","Stunden: 10 Koffein: 20.0 mg","Stunden: 15 Koffein: 10.0 mg"] },
@@ -2334,7 +2334,7 @@ const TASKS = [
     { code:'akku = int(input())\nverbrauch = int(input())\nzimmer = 0\nwhile akku >= verbrauch:\n    zimmer = zimmer + 1\n    print("Zimmer:", zimmer, "Akku:", akku)\n    akku = akku - verbrauch\nprint("Zurück zur Ladestation")', msg:"Angezeigt wird der Akkustand von vor dem Saugen. Ziehen Sie zuerst den Verbrauch ab und geben Sie danach aus." },
     { code:'akku = int(input())\nverbrauch = int(input())\nzimmer = 0\nwhile akku >= verbrauch:\n    akku = akku - verbrauch\n    print("Zimmer:", zimmer, "Akku:", akku)\n    zimmer = zimmer + 1\nprint("Zurück zur Ladestation")', msg:"Das erste Zimmer heißt hier Zimmer 0. Erhöhen Sie zimmer, bevor Sie ausgeben." },
     { code:'akku = int(input())\nverbrauch = int(input())\nzimmer = 0\nwhile akku >= verbrauch:\n    zimmer = zimmer + 1\n    print("Zimmer:", zimmer, "Akku:", akku)\nprint("Zurück zur Ladestation")', msg:"Der Akku wird nie kleiner, deshalb endet die Schleife nicht. Im Rumpf fehlt: akku = akku - verbrauch" },
-    { code:'akku = input()\nverbrauch = input()\nzimmer = 0\nwhile akku >= verbrauch:\n    akku = akku - verbrauch\n    zimmer = zimmer + 1\n    print("Zimmer:", zimmer, "Akku:", akku)\nprint("Zurück zur Ladestation")', msg:"Akkustand und Verbrauch sind noch Text. Mit Text kann man nicht rechnen: Lesen Sie beide mit int(input(...)) ein." },
+    { rawOnly:true, code:'akku = input()\nverbrauch = input()\nzimmer = 0\nwhile akku >= verbrauch:\n    akku = akku - verbrauch\n    zimmer = zimmer + 1\n    print("Zimmer:", zimmer, "Akku:", akku)\nprint("Zurück zur Ladestation")', msg:"Akkustand und Verbrauch sind noch Text. Mit Text kann man nicht rechnen: Lesen Sie beide mit int(input(...)) ein." },
     { code:'akku = int(input())\nverbrauch = int(input())\nzimmer = 0\nwhile akku >= verbrauch:\n    akku = akku - verbrauch\n    zimmer = zimmer + 1\n    print("Zimmer:", zimmer, "Akku:", akku)\n    print("Zurück zur Ladestation")', msg:"Der Roboter fährt nach jedem Zimmer zurück. Diese print-Zeile gehört ohne Einrückung hinter die Schleife." }
   ],
   solution:'akku = int(input("Akkustand: "))\nverbrauch = int(input("Verbrauch pro Zimmer: "))\nzimmer = 0\nwhile akku >= verbrauch:\n    akku = akku - verbrauch\n    zimmer = zimmer + 1\n    print("Zimmer:", zimmer, "Akku:", akku)\nprint("Zurück zur Ladestation")'
@@ -2343,8 +2343,8 @@ const TASKS = [
   prompt:'Ein Drucker erzeugt Muster. Das Programm fragt mit <code>input</code> <b>zuerst ein Zeichen</b> und <b>danach die Höhe</b> ab. Die erste Zeile enthält das Zeichen so oft, wie die Höhe angibt, jede weitere Zeile eines weniger.<br>Text lässt sich vervielfachen: <code>"+" * 3</code> ergibt <code>+++</code>.<div class="io"><div><b>Eingaben nacheinander</b><pre class="code">*\n4</pre></div><div><b>Ausgabe</b><pre class="code">****\n***\n**\n*</pre></div></div>',
   starter:'',
   tests:[
-    { label:"Zeichen * und Höhe 4", inputs:["*","4"], question:true, must:[T_LOOP], lines:["****","***","**","*"] },
-    { label:"Zeichen # und Höhe 3", inputs:["#","3"], question:true, lines:["###","##","#"] }
+    { label:"Zeichen * und Höhe 4", textTimes:true, inputs:["*","4"], question:true, must:[T_LOOP], lines:["****","***","**","*"] },
+    { label:"Zeichen # und Höhe 3", textTimes:true, inputs:["#","3"], question:true, lines:["###","##","#"] }
   ],
   hints:[
     "Das Zeichen ist Text, die Höhe eine ganze Zahl. Nur eine der beiden Eingaben braucht int.",
@@ -2354,9 +2354,9 @@ const TASKS = [
     "Im Rumpf: print(zeichen * laenge)"
   ],
   wrong:[
-    { code:'zeichen = input()\nhoehe = int(input())\nfor laenge in range(1, hoehe + 1):\n    print(zeichen * laenge)', msg:"Ihr Muster wächst nach unten. Es soll oben am längsten sein: Zählen Sie rückwärts, also Start bei hoehe und negative Schrittweite." },
-    { code:'zeichen = input()\nhoehe = int(input())\nfor laenge in range(hoehe):\n    print(zeichen * laenge)', msg:"Ihr Muster beginnt mit einer leeren Zeile und wächst. Es soll bei der vollen Höhe beginnen und kleiner werden: range(hoehe, 0, -1) ist der passende Gedanke." },
-    { code:'zeichen = input()\nhoehe = int(input())\nfor laenge in range(hoehe, 1, -1):\n    print(zeichen * laenge)', msg:"Die Zeile mit nur einem Zeichen fehlt. range hört vor der Grenze auf: Beim Herunterzählen bis 1 ist die Grenze 0." },
+    { code:'zeichen = input()\nhoehe = int(input())\nfor laenge in range(1, hoehe + 1):\n    print(zeichen * laenge)', msg:"Ihr Muster wächst nach unten. Es soll oben am längsten sein: Zählen Sie rückwärts. Bei for: Start bei hoehe und negative Schrittweite. Bei while: Beginnen Sie bei hoehe und verringern Sie die Länge im Rumpf um 1." },
+    { code:'zeichen = input()\nhoehe = int(input())\nfor laenge in range(hoehe):\n    print(zeichen * laenge)', msg:"Ihr Muster beginnt mit einer leeren Zeile und wächst. Es soll bei der vollen Höhe beginnen und kleiner werden. Bei for ist range(hoehe, 0, -1) der passende Gedanke, bei while beginnt die Länge bei hoehe und sinkt im Rumpf um 1." },
+    { code:'zeichen = input()\nhoehe = int(input())\nfor laenge in range(hoehe, 1, -1):\n    print(zeichen * laenge)', msg:"Die Zeile mit nur einem Zeichen fehlt. Bei for hört range vor der Grenze auf, beim Herunterzählen bis 1 ist die Grenze 0. Bei while muss die Bedingung auch für die Länge 1 noch erfüllt sein." },
     { code:'zeichen = input()\nhoehe = int(input())\nfor laenge in range(hoehe - 1, 0, -1):\n    print(zeichen * laenge)', msg:"Die längste Zeile fehlt. Der Start ist die Höhe selbst." },
     { code:'zeichen = input()\nhoehe = int(input())\nfor laenge in range(hoehe, 0, -1):\n    print(zeichen * hoehe)', msg:"Alle Zeilen sind gleich lang. Vervielfachen Sie das Zeichen mit der Variable, die in der Schleife herunterzählt." },
     { code:'zeichen = input()\nhoehe = int(input())\nfor laenge in range(hoehe, 0, -1):\n    print("zeichen" * laenge)', msg:"In Anführungszeichen steht das Wort zeichen selbst. Gemeint ist die Variable: Schreiben Sie sie ohne Anführungszeichen." },
@@ -2382,7 +2382,7 @@ const TASKS = [
     "Dritte Zeile im Rumpf: print(\"Name:\", name, \"Alter:\", ___)  Nach der Schleife: print(\"Alle sind drin!\")"
   ],
   wrong:[
-    { code:'anzahl = int(input())\nfor gast in range(1, anzahl):\n    name = input()\n    geburtsjahr = int(input())\n    print("Name:", name, "Alter:", 2026 - geburtsjahr)\nprint("Alle sind drin!")', msg:"Ein Gast fehlt: range(1, anzahl) läuft einmal zu wenig. Nehmen Sie range(anzahl) oder range(1, anzahl + 1)." },
+    { code:'anzahl = int(input())\nfor gast in range(1, anzahl):\n    name = input()\n    geburtsjahr = int(input())\n    print("Name:", name, "Alter:", 2026 - geburtsjahr)\nprint("Alle sind drin!")', msg:"Ein Gast fehlt. Prüfen Sie, ob die Schleife oft genug läuft und ob das print im Rumpf steht. Bei for passt range(anzahl) oder range(1, anzahl + 1), bei while muss auch der letzte Gast mitzählen." },
     { code:'anzahl = int(input())\nfor gast in range(anzahl):\n    name = input()\n    geburtsjahr = input()\n    print("Name:", name, "Alter:", 2026 - geburtsjahr)\nprint("Alle sind drin!")', msg:"Das Geburtsjahr ist noch Text, damit kann man nicht rechnen. Lesen Sie es mit int(input(...)) ein." },
     { code:'anzahl = int(input())\nfor gast in range(anzahl):\n    name = int(input())\n    geburtsjahr = int(input())\n    print("Name:", name, "Alter:", 2026 - geburtsjahr)\nprint("Alle sind drin!")', msg:"Der Name ist Text und darf nicht mit int umgewandelt werden. Prüfen Sie auch die Reihenfolge: zuerst der Name, dann das Geburtsjahr." },
     { code:'anzahl = input()\nfor gast in range(anzahl):\n    name = input()\n    geburtsjahr = int(input())\n    print("Name:", name, "Alter:", 2026 - geburtsjahr)\nprint("Alle sind drin!")', msg:"Die Anzahl ist noch Text. range braucht eine ganze Zahl: int(input(...))." },
@@ -2408,7 +2408,7 @@ const $ = (sel, root=document) => root.querySelector(sel);
 const STORE_KEY = "py-uebung-schleifen-v3";
 function normalizeState(s){
   s = s || {};
-  return { done:s.done||{}, code:s.code||{}, fill:s.fill||{}, mc:s.mc||{}, trace:s.trace||{}, order:s.order||{}, pick:s.pick||{},
+  return { done:s.done||{}, code:s.code||{}, passed:s.passed||{}, fill:s.fill||{}, mc:s.mc||{}, trace:s.trace||{}, order:s.order||{}, pick:s.pick||{},
     shown:s.shown||{}, check:s.check||{}, path:s.path||null, student:Object.assign({name:"",klasse:""}, s.student||{}) };
 }
 let state = normalizeState();
@@ -2485,7 +2485,7 @@ function refreshCard(t, card){
 function retryTask(t){
   if (t.type === "code" && !confirm("Ihr Code für diese Aufgabe wird auf den Startcode zurückgesetzt. Fortfahren?")) return;
   if (PY.cancelInput) PY.cancelInput();
-  ["done","shown","mc","fill","trace","order","pick","code"].forEach(k => delete state[k][t.id]);
+  ["done","shown","mc","fill","trace","order","pick","code","passed"].forEach(k => delete state[k][t.id]);
   save();
   const card = RENDER[t.type](t);
   $("#task-" + t.id).replaceWith(card);
@@ -2853,6 +2853,7 @@ function renderCode(t){
     if (pass === t.tests.length){
       setFb(fb, "ok", "<b>Alle Tests bestanden.</b>" + (isViewed(t) ? " Weil Sie vorher die Musterlösung geöffnet haben, zählt die Aufgabe als angesehen." : "") +
         (t.passNote && new RegExp(t.passNote.re, "m").test(code) ? '<div class="cause">' + esc(t.passNote.msg) + '</div>' : "") + html);
+      state.passed[t.id] = code;              // genau diese Fassung hat alle Tests bestanden
       markDone(t, card);
     } else {
       setFb(fb, "no", "<b>" + pass + " von " + t.tests.length + " Tests bestanden.</b>" + html);
@@ -3041,6 +3042,7 @@ const SYNTAX_ERR = /^(SyntaxError|ParseError|IndentationError|TokenError)|EOF in
 const KEYWORDS = /^(and|or|not|in|is|if|else|for|while)$/;
 
 // Blendet Texte (bleiben als "" erhalten) und Kommentare aus
+const STRING_PREFIX = /(^|[^\wäöüÄÖÜß])(?:[rR][fFbB]?|[fFbB][rR]?|[uU])$/;   // f"...", r"...", rf"..."
 function stripLine(line){
   let bare = "", quote = "", comment = "";
   for (let k = 0; k < line.length; k++){
@@ -3051,7 +3053,7 @@ function stripLine(line){
       continue;
     }
     if (ch === "#"){ comment = line.slice(k); break; }
-    if (ch === '"' || ch === "'"){ quote = ch; bare += '"'; }
+    if (ch === '"' || ch === "'"){ quote = ch; bare = bare.replace(STRING_PREFIX, "$1") + '"'; }
     else bare += ch;
   }
   return { bare:bare, comment:comment, open:!!quote };
@@ -3097,6 +3099,7 @@ function lineProblem(text, depth){
 
 // Sucht bei Syntaxfehlern die typischen Anfängerfehler und nennt Zeile und Ursache
 function diagnoseSyntax(code){
+  if (/"""|'''/.test(code)) return null;   // Texte über mehrere Zeilen kann die Zeilenprüfung nicht beurteilen
   const lines = String(code).replace(/\t/g, "    ").split("\n");
   const found = (i, msg) => ({ line:i + 1, msg:msg });
   let depth = 0, openLine = 0, openComment = "", prev = null;
@@ -3154,6 +3157,7 @@ function typeHint(r, code){
 }
 
 const ENDLESS_HINT = "Das ist vermutlich eine Endlosschleife. Prüfen Sie: Ändert sich im Rumpf der Wert, den die Bedingung prüft? Er muss neu gespeichert werden, zum Beispiel zahl = zahl + 1: links genau der Name aus der Bedingung. Nur zahl + 1 speichert nichts. Ist diese Zeile eingerückt? Läuft die Änderung in die richtige Richtung?";
+const inputAgain = code => /\binput\s*\(/.test(bareCode(code)) ? " Stammt der Wert aus input, besteht die Änderung darin, im Rumpf erneut einzulesen." : "";
 const stringZero = code => /(!=|==)\s*["']0["']/.test(code) ? ' Vergleichen Sie mit der Zahl 0 ohne Anführungszeichen: "0" ist Text.' : "";
 
 // Ergänzt das Ergebnis eines Programmlaufs um den passenden Hinweis
@@ -3162,10 +3166,10 @@ function addHint(r, code){
   if (SYNTAX_ERR.test(r.err)){
     const d = diagnoseSyntax(code);
     if (d){ r.line = d.line; r.hint = d.msg; }
-  } else if (r.endless) r.hint = ENDLESS_HINT + stringZero(code);
+  } else if (r.endless) r.hint = ENDLESS_HINT + inputAgain(code) + stringZero(code);
   else if (r.err.startsWith("TypeError")) r.hint = typeHint(r, code);
   else if (r.err.includes("Zu viele Eingaben")) r.hint = "Das Programm fragt öfter nach Eingaben als vorgesehen. " + (/^\s*while\b/m.test(code)
-    ? "Wird die neue Eingabe in der Variable gespeichert, die in der Bedingung steht? Stimmt die Bedingung?"
+    ? "Wann soll die Schleife enden? Wird die Variable aus der Bedingung im Rumpf richtig neu gespeichert, durch eine Rechnung oder durch erneutes Einlesen? Stimmen Startwert und Vergleich?"
     : "Stimmt die Angabe in range? Wird input in jedem Durchlauf nur einmal aufgerufen?") + stringZero(code);
   return r;
 }
@@ -3179,13 +3183,13 @@ function causeHint(code, want, got, tc){
   for (const x of bare.matchAll(/^[ \t]+([A-Za-z_]\w*)\s*=\s*0\s*$/gm))
     if (new RegExp("\\b" + x[1] + "\\s*=\\s*" + x[1] + "\\s*\\+").test(bare)) return "Die Zeile " + x[1] + " = 0 steht eingerückt in der Schleife. Dann beginnt jeder Durchlauf wieder bei 0. Gehört sie vor die Schleife?";
   const raw = rawInputVars(code).find(v => new RegExp("\\*\\s*" + v + "\\b|\\b" + v + "\\s*\\*").test(bare));
-  if (raw) return "input liefert Text, " + raw + " ist also keine Zahl. Text mal 3 hängt den Text dreimal aneinander. Lesen Sie mit int(input(...)) ein.";
+  if (raw && !(tc && tc.textTimes)) return "input liefert Text, " + raw + " ist also keine Zahl. Mit * wird Text nur mehrfach aneinandergehängt. Lesen Sie die Zahl mit int(input(...)) oder float(input(...)) ein.";
   if (tc && tc.inputInLoop && !/^[ \t]+.*\binput\s*\(/m.test(bare)) return "Im Schleifenrumpf steht kein input. Hier soll in jedem Durchlauf neu gefragt werden: Die input-Zeile gehört eingerückt in die Schleife.";
   const whole = list => list.map(s => s.replace(/(\d)\.0(?!\d)/g, "$1")).join("\n");
   if (got.join("\n") !== want.join("\n") && whole(got) === whole(want)) return "Die Zahlen unterscheiden sich nur durch .0. Prüfen Sie die Umwandlung: float(input(...)) für Kommazahlen, int(input(...)) für ganze Zahlen.";
   if (!got.length) return "Es erscheint keine Ausgabe. Gibt es ein print? " + (/^\s*while\b/m.test(bare)
     ? "Ist die Bedingung vielleicht schon beim Start falsch?"
-    : "Ist range vielleicht leer? Zum Abwärtszählen braucht range eine negative dritte Zahl.");
+    : /^\s*for\b/m.test(bare) ? "Ist range vielleicht leer? Zum Abwärtszählen braucht range eine negative dritte Zahl." : "");   // ohne Schleife kein range-Hinweis
   const label = s => s.split(" ")[0];
   for (const w of want){
     const l = label(w);
@@ -3196,19 +3200,19 @@ function causeHint(code, want, got, tc){
   const shape = s => String(s).replace(/-?\d+(\.\d+)?/g, "#");
   const series = want.length > 2 && shape(want[0]) === shape(want[1]);
   if (series && got.length === 1 && got[0] === want[want.length - 1] && shape(got[0]) !== shape(want[0])) return "Nur die letzte Zeile erscheint. Fehlt das print in der Schleife, oder läuft die Schleife gar nicht?";
-  const key = s => s.toLowerCase().replace(/(\d)\.(\d)/g, "$1d$2").replace(/[^a-z0-9äöüß]/g, "");
-  if (got.length === want.length && want.every((w,i) => key(w) === key(got[i]))) return "Fast richtig. Es geht nur um Groß- und Kleinschreibung, Satzzeichen oder Leerzeichen. Die abweichende Stelle ist gelb markiert.";
+  const key = s => s.toLowerCase().replace(/(\d)\.(\d)/g, "$1d$2").replace(/[^a-z0-9äöüß#*+\-]/g, "");
+  if (got.length === want.length && want.every((w,i) => key(w) !== "" && key(w) === key(got[i]))) return "Fast richtig. Es geht nur um Groß- und Kleinschreibung, Satzzeichen oder Leerzeichen. Die abweichende Stelle ist gelb markiert.";
   const same = n => want.slice(0, n).every((w,i) => w === got[i]);
   if (want.length > 1 && got.length === want.length - 1 && same(got.length))
     return shape(want[want.length - 1]) === shape(want[want.length - 2])
-      ? "Es fehlt nur die letzte Zeile. Stimmt der Vergleich (< oder <=) beziehungsweise die Grenze in range, die selbst nicht dazugehört?"
+      ? "Es fehlt nur die letzte Zeile. " + (/^\s*for\b/m.test(bare) ? "Stimmt die Grenze in range, die selbst nicht dazugehört?" : "Stimmt der Vergleich in der Bedingung (< oder <=)?")
       : "Es fehlt nur die letzte Zeile. Steht ihr print hinter der Schleife?";
   if (got.length === want.length + 1 && same(want.length))
     return shape(got[got.length - 1]) === shape(want[want.length - 1])
       ? "Am Ende steht eine Zeile zu viel. Läuft die Schleife einen Durchlauf zu lange?"
       : "Am Ende steht eine Zeile, die nicht verlangt ist.";
   if (series && got[0] !== want[0] && shape(got[0]) === shape(want[0]) && (got[0] === want[1] || got[1] === want[0]))
-    return "Der Anfang stimmt nicht. Prüfen Sie den Startwert und die Reihenfolge im Rumpf: erst ausgeben, dann ändern.";
+    return "Der Anfang stimmt nicht. Prüfen Sie den Startwert. Ändert sich im Rumpf eine Variable, prüfen Sie auch, ob das vor oder nach der Ausgabe geschehen muss.";
   // Nur bei Aufgaben, die ausdrücklich eine Summe verlangen
   if (tc && tc.sumLine){
     const i = want.findIndex(w => w.startsWith(tc.sumLine));
@@ -3220,15 +3224,16 @@ function causeHint(code, want, got, tc){
   return "";
 }
 // Verhält sich ein typisches falsches Programm genauso wie das geprüfte, gilt dessen Meldung
-async function knownMistake(tc, r){
+async function knownMistake(tc, r, code){
   if (!tc.wrong) return "";
   const view = o => {
     const lines = String(o.out || "").split("\n").map(normLine).filter(l => l && !(/[?:]$/.test(l) && !(tc.lines || []).some(w => w.startsWith(l))));
     return (o.endless ? "endlos|" + lines.slice(0, 8).join("\n") : (o.err || "") + "|" + lines.join("\n"));
   };
-  if (r.endless && !r.out) return "";   // ohne Ausgabe nicht unterscheidbar
+  if ((r.endless || !r.err) && !String(r.out || "").trim()) return "";   // ohne Ausgabe nicht unterscheidbar
   const mine = view(r);
   for (const w of tc.wrong){
+    if (w.rawOnly && !rawInputVars(code).length) continue;   // „noch Text“ setzt eine nicht umgewandelte Eingabe voraus
     const other = await runPython(w.code, tc.inputs || []);
     if (view(other) === mine) return w.msg;
   }
@@ -3255,7 +3260,7 @@ async function ruleFail(code, tc, rule){
 // Der Test mit anderen Werten scheitert, obwohl der erste bestanden wurde
 function otherValuesHint(tc){
   return '<div class="cause"><b>Mit den vorgegebenen Werten stimmt alles.</b> Dieser Test setzt ' + esc(tc.sub.map(x => x[1]).join(", ")) +
-    '. Verwenden Sie in der Schleife die Variable statt einer festen Zahl und lassen Sie die vorgegebenen Zeilen am Anfang stehen.</div>';
+    '. Prüfen Sie: Verwenden Sie in der Schleife überall die Variablen statt fester Zahlen? Stehen die vorgegebenen Zeilen noch am Anfang? Hat die Ausgabe genau das verlangte Format?</div>';
 }
 
 
@@ -3370,16 +3375,19 @@ async function evalTest(code, tc){
   for (const c of (tc.must || [])) if (!new RegExp(c.re, c.flags || "").test(code)) return await ruleFail(code, tc, c);
   const r = await runPython(code, tc.inputs || []);
   if (r.err){
-    const hint = (await knownMistake(tc, r)) || r.hint || explainError(r.err);
+    const hint = (await knownMistake(tc, r, code)) || r.hint || explainError(r.err);
     return { ok:false, label:tc.label, endless:r.endless, msg:(r.endless ? "" : "Fehler" + (r.line ? " in Zeile " + r.line : "") + ": ") + r.err + (hint ? "\n" + hint : "") };
   }
   if (tc.lines){
     const got = r.out.split("\n").map(normLine).filter((l,i,a) => !(l === "" && a.slice(i).every(x => normLine(x) === "")));
     const want = tc.lines.map(normLine);
     if (tc.question) for (let k = got.length - 1; k >= 0; k--) if (/[?:]$/.test(got[k]) && !want.some(w => w.startsWith(got[k]))) got.splice(k, 1);
+    // Überzählige Nullen am Ende einer Kommazahl zählen nicht: 2662.00 gilt wie 2662.0 (aber 600 nicht wie 600.0)
+    const trimZeros = s => s.replace(/(\d+\.\d+?)0+(?!\d)/g, "$1");
+    got.forEach((l,i) => { if (want[i] !== undefined && trimZeros(l) === trimZeros(want[i])) got[i] = want[i]; });
     const same = got.length === want.length && want.every((l,i) => l === got[i]);
     return same ? { ok:true, label:tc.label } :
-      { ok:false, label:tc.label, html:(await knownMistake(tc, r).then(m => m ? ownBox(m) : causeBox(code, want, got, tc))) + linesFeedback(want, got) };
+      { ok:false, label:tc.label, html:(await knownMistake(tc, r, code).then(m => m ? ownBox(m) : causeBox(code, want, got, tc))) + linesFeedback(want, got) };
   }
   const missing = tc.regex.filter(p => !new RegExp(p).test(r.out));
   return missing.length === 0 ? { ok:true, label:tc.label } :
@@ -3399,6 +3407,10 @@ function pdfEnc(s){
     const c = ch.codePointAt(0);
     if (c === 0x2192) o += "->";
     else if (c === 0x2713) o += "ok";
+    else if (c === 0x2260) o += "!=";
+    else if (c === 0x2264) o += "<=";
+    else if (c === 0x2265) o += ">=";
+    else if (c >= 0x2600 && c <= 0x27BF) o += "";      // Schmucksymbole entfallen
     else if (CP1252[c]) o += String.fromCharCode(CP1252[c]);
     else if (c >= 32 && c < 256) o += ch;
     else if (c === 9) o += "    ";
@@ -3410,34 +3422,69 @@ const pdfEsc = s => s.replace(/\\/g, "\\\\").replace(/\(/g, "\\(").replace(/\)/g
 function textWidth(s, size, bold){
   let w = 0;
   for (const ch of s) w += (HELV_W[ch] || 556);
-  return w * size / 1000 * (bold ? 1.06 : 1);
+  return w * size / 1000 * (bold ? 1.08 : 1);
 }
+
+// Farben und Maße nach dem Moodboard Informatik
+const rgb = hex => [1,3,5].map(i => (parseInt(hex.slice(i, i + 2), 16) / 255).toFixed(3)).join(" ");
+const INK = { petrol:rgb("#123A4E"), blue:rgb("#4A6FA5"), green:rgb("#0E7C6B"), orange:rgb("#F4A259"), red:rgb("#C8553D"),
+  box:rgb("#F5F1E8"), text:rgb("#1F1F1F"), grey:rgb("#555555"), white:rgb("#FFFFFF") };
+const MM = 72 / 25.4;
 
 class PdfDoc {
   constructor(){
-    this.W = 595; this.H = 842; this.M = 50;
-    this.pages = []; this.cur = null; this.y = 0;
+    this.W = 595.28; this.H = 841.89;                  // A4 hoch
+    this.MX = 18 * MM; this.MY = 19 * MM;
+    this.L = this.MX; this.R = this.W - this.MX;
+    this.top = this.H - this.MY - 48;                  // darüber steht die Kopfzeile
+    this.bottom = this.MY + 16;                        // darunter steht die Fußzeile
+    this.pages = []; this.cur = null; this.y = 0; this.skins = [];
     this.newPage();
   }
-  newPage(){ this.cur = []; this.pages.push(this.cur); this.y = this.H - this.M; }
-  need(h){ if (this.y - h < this.M + 14) this.newPage(); }
-  // fn: 1 = Helvetica, 2 = Helvetica-Bold, 3 = Courier
+  newPage(){ this.cur = []; this.pages.push(this.cur); this.y = this.top; }
+  need(h){ if (this.y - h < this.bottom && this.y < this.top) this.newPage(); }
+  rect(color, x, y, w, h){ this.cur.push("q " + color + " rg " + [x, y, w, h].map(v => v.toFixed(2)).join(" ") + " re f Q"); }
+  // fn: 1 = Helvetica, 2 = Helvetica-Bold, 3 = Courier, 4 = ZapfDingbats
+  draw(text, fn, size, x, y, color){
+    this.cur.push("BT " + (color || INK.text) + " rg /F" + fn + " " + size.toFixed(2) + " Tf " + x.toFixed(2) + " " + y.toFixed(2) + " Td (" + pdfEsc(pdfEnc(text)) + ") Tj ET");
+  }
+  // Kastenfläche Zeile für Zeile malen: So bleibt das Bild auch über einen Seitenumbruch richtig
+  band(h){
+    this.skins.forEach(s => {
+      if (s.fill) this.rect(s.fill, s.x0, this.y, s.x1 - s.x0, h + 0.3);
+      if (s.stripe) this.rect(s.stripe, s.x0, this.y, 4.5, h + 0.3);
+    });
+  }
   line(text, fn, size, opts){
     opts = opts || {};
-    const lh = size * 1.35;
+    const lh = size * (opts.lead || 1.45);
     this.need(lh);
     this.y -= lh;
-    if (opts.bg){
-      this.cur.push("q " + opts.bg + " rg " + (this.M - 4) + " " + (this.y - size * 0.3).toFixed(1) + " " + (this.W - 2 * this.M + 8) + " " + lh.toFixed(1) + " re f Q");
-    }
-    if (text !== "")
-      this.cur.push("BT " + (opts.color || "0 g") + " /F" + fn + " " + size + " Tf " + this.M + " " + this.y.toFixed(1) + " Td (" + pdfEsc(pdfEnc(text)) + ") Tj ET");
+    this.band(lh);
+    if (opts.bg) this.rect(opts.bg, this.L, this.y, this.R - this.L, lh + 0.3);
+    if (opts.mark) this.rect(opts.mark, this.L, this.y, 1.5, lh + 0.3);
+    const base = this.y + (lh - size * 0.7) / 2;
+    let x = this.L + (opts.indent || 0);
+    if (opts.sym){ this.draw(opts.sym, 4, size, x, base, opts.color); x += size * 1.35; }
+    if (opts.prefix) this.draw(opts.prefix, 1, size, this.L, base, opts.color);
+    if (text !== "") this.draw(text, fn, size, x, base, opts.color);
+    if (opts.right) this.draw(opts.right, 1, size - 1.5, this.R - textWidth(opts.right, size - 1.5, false), base, opts.color);
   }
-  gap(h){ this.y -= h; }
-  rule(){
+  gap(h){ this.y -= h; this.band(h); }
+  rule(color){
     this.need(8);
-    this.cur.push("q 0.12 0.37 0.75 RG 1 w " + this.M + " " + (this.y - 2).toFixed(1) + " m " + (this.W - this.M) + " " + (this.y - 2).toFixed(1) + " l S Q");
-    this.y -= 6;
+    this.rect(color, this.L, this.y - 2, this.R - this.L, 1.2);
+    this.y -= 9;
+  }
+  chapter(title){                                       // Jedes Hauptkapitel beginnt auf einer neuen Seite
+    if (this.y < this.top) this.newPage();
+    this.line(title, 2, 16, { color:INK.petrol });
+    this.rule(INK.blue);
+  }
+  heading(title){
+    this.gap(4);
+    this.line(title, 2, 13, { color:INK.petrol });
+    this.rule(INK.blue);
   }
   wrap(text, size, bold, maxW){
     const out = [];
@@ -3452,24 +3499,64 @@ class PdfDoc {
     }
     return out;
   }
-  para(text, size, bold){
-    for (const l of this.wrap(text, size, bold, this.W - 2 * this.M)) this.line(l, bold ? 2 : 1, size);
+  para(text, size, bold, color){
+    this.wrap(text, size, bold, this.R - this.L).forEach(l => this.line(l, bold ? 2 : 1, size, { color }));
   }
-  code(text){
-    const size = 9, maxCh = Math.floor((this.W - 2 * this.M - 8) / (size * 0.6));
+  item(prefix, text){
+    this.wrap(text, 11, false, this.R - this.L - 16).forEach((l, i) => this.line(l, 1, 11, { indent:16, prefix:i ? "" : prefix }));
+  }
+  label(text, color){ this.line(text, 2, 9.5, { color:color || INK.grey }); }
+  note(text){                                           // Hinweis: orange Fläche mit dunklem Text
+    const L = this.L, R = this.R;
+    this.gap(3);
+    this.skins.push({ x0:L, x1:R, fill:INK.orange });
+    this.L = L + 6; this.R = R - 6;
+    this.gap(2); this.para(text, 9.5); this.gap(2);
+    this.skins.pop(); this.L = L; this.R = R;
+    this.gap(2);
+  }
+  code(text, bg){
+    const room = this.R - this.L - 12;
+    const raw = String(text).replace(/\s+$/, "").split("\n").map(l => l.replace(/\t/g, "    "));
+    const longest = Math.max(1, ...raw.map(l => l.length));
+    const size = Math.max(8, Math.min(9.5, room / (longest * 0.6)));
+    const maxCh = Math.floor(room / (size * 0.6) + 1e-6);
     const lines = [];
-    String(text).replace(/\s+$/, "").split("\n").forEach(l => {
-      l = l.replace(/\t/g, "    ");
+    raw.forEach(l => {
       if (!l.length) lines.push("");
       while (l.length > maxCh){ lines.push(l.slice(0, maxCh)); l = l.slice(maxCh); }
       if (l.length) lines.push(l);
     });
-    if (!lines.length) lines.push("");
-    lines.forEach(l => this.line(l, 3, size, { bg:"0.94 0.95 0.97" }));
+    this.gap(3);
+    lines.forEach(l => this.line(l, 3, size, { bg:bg || INK.box, mark:INK.green, indent:8, lead:1.35 }));
     this.gap(4);
   }
-  build(footerText){
-    const total = this.pages.length;
+  // Kasten mit Kopfbalken (Aufgabe) oder mit Randstreifen (Merke, Achtung), möglichst ungeteilt
+  box(style, draw){
+    const full = pdfHeight(this, d => d.boxBody(style, draw));
+    this.need(full <= this.top - this.bottom ? full : 90);
+    this.boxBody(style, draw);
+    this.gap(9);
+  }
+  boxBody(style, draw){
+    const L = this.L, R = this.R;
+    if (style.bar){
+      this.skins.push({ x0:L, x1:R, fill:style.bar });
+      this.L = L + 9; this.R = R - 8;
+      this.line(style.barTitle, 2, 11, { color:INK.white, right:style.right, sym:"." });
+      this.skins.pop(); this.L = L; this.R = R;
+    }
+    this.skins.push({ x0:L, x1:R, fill:style.fill, stripe:style.stripe });
+    this.L = L + 13; this.R = R - 8;
+    this.gap(5);
+    if (style.title) this.wrap(style.title, 11, true, this.R - this.L - 18).forEach((l, i) =>
+      this.line(l, 2, 11, { color:style.color, sym:i ? null : style.sym, indent:i && style.sym ? 15 : 0 }));
+    draw(this);
+    this.gap(6);
+    this.skins.pop(); this.L = L; this.R = R;
+  }
+  build(info){
+    const total = this.pages.length, logo = info.logo;
     const objs = [];
     const add = s => { objs.push(s); return objs.length; };
     add("<< /Type /Catalog /Pages 2 0 R >>");           // 1
@@ -3477,12 +3564,27 @@ class PdfDoc {
     add("<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica /Encoding /WinAnsiEncoding >>");       // 3
     add("<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold /Encoding /WinAnsiEncoding >>");  // 4
     add("<< /Type /Font /Subtype /Type1 /BaseFont /Courier /Encoding /WinAnsiEncoding >>");         // 5
+    add("<< /Type /Font /Subtype /Type1 /BaseFont /ZapfDingbats >>");                               // 6
+    const image = logo ? add("<< /Type /XObject /Subtype /Image /Width " + logo.w + " /Height " + logo.h +
+      " /ColorSpace /DeviceRGB /BitsPerComponent 8 /Filter /DCTDecode /Length " + logo.data.length + " >>\nstream\n" + logo.data + "\nendstream") : 0;
     const kids = [];
     this.pages.forEach((p, i) => {
-      const ft = pdfEsc(pdfEnc(footerText + "   Seite " + (i + 1) + " von " + total));
-      const stream = p.join("\n") + "\nBT 0.4 g /F1 8 Tf " + this.M + " 28 Td (" + ft + ") Tj ET";
+      this.cur = p;
+      // Kopfzeile
+      const y0 = this.H - this.MY - 28, right = this.W - this.MX;
+      if (logo) this.cur.push("q " + (28 * logo.w / logo.h).toFixed(2) + " 0 0 28 " + this.MX.toFixed(2) + " " + y0.toFixed(2) + " cm /Im1 Do Q");
+      else this.draw("Berufskolleg Witten", 2, 12, this.MX, y0 + 9, INK.petrol);
+      this.draw(info.head1, 2, 9.5, right - textWidth(info.head1, 9.5, true), y0 + 16, INK.petrol);
+      if (info.head2) this.draw(info.head2, 1, 9, right - textWidth(info.head2, 9, false), y0 + 3, INK.grey);
+      this.rect(INK.petrol, this.MX, y0 - 8, right - this.MX, 1.4);
+      // Fußzeile mit Quelle
+      const number = "Seite " + (i + 1) + " von " + total;
+      this.draw(info.foot, 1, 8, this.MX, this.MY, INK.grey);
+      this.draw(number, 1, 8, right - textWidth(number, 8, false), this.MY, INK.grey);
+      const stream = p.join("\n");
       const c = add("<< /Length " + stream.length + " >>\nstream\n" + stream + "\nendstream");
-      const pg = add("<< /Type /Page /Parent 2 0 R /MediaBox [0 0 " + this.W + " " + this.H + "] /Resources << /Font << /F1 3 0 R /F2 4 0 R /F3 5 0 R >> >> /Contents " + c + " 0 R >>");
+      const pg = add("<< /Type /Page /Parent 2 0 R /MediaBox [0 0 " + this.W + " " + this.H + "] /Resources << /Font << /F1 3 0 R /F2 4 0 R /F3 5 0 R /F4 6 0 R >>" +
+        (image ? " /XObject << /Im1 " + image + " 0 R >>" : "") + " >> /Contents " + c + " 0 R >>");
       kids.push(pg + " 0 R");
     });
     objs[1] = "<< /Type /Pages /Kids [" + kids.join(" ") + "] /Count " + total + " >>";
@@ -3500,7 +3602,11 @@ class PdfDoc {
 function promptParts(html){
   const d = document.createElement("div"); d.innerHTML = html;
   const parts = []; let txt = "";
-  const flush = () => { if (txt.trim()) parts.push({ text:txt.replace(/\s+/g, " ").trim() }); txt = ""; };
+  const flush = () => {
+    const clean = txt.replace(/[^\S\n]+/g, " ").replace(/ ?\n\s*/g, "\n").trim();
+    if (clean) parts.push({ text:clean });
+    txt = "";
+  };
   d.childNodes.forEach(n => {
     if (n.nodeName === "PRE"){ flush(); parts.push({ code:n.textContent }); }
     else txt += n.textContent;
@@ -3700,6 +3806,7 @@ function cleanState(raw){
   return normalizeState({
     done:take(raw.done, yes), shown:take(raw.shown, yes),
     code:take(raw.code, v => typeof v === "string"),
+    passed:take(raw.passed, v => typeof v === "string"),
     fill:take(raw.fill, strings), trace:take(raw.trace, strings),
     mc:take(raw.mc, v => typeof v === "number"),
     order:take(raw.order, (v, t) => Array.isArray(v) && !!t.lines && v.length === t.lines.length &&
@@ -4141,78 +4248,186 @@ function filledTemplate(t){
   const v = state.fill[t.id] || [];
   return t.template.replace(/\[\[(\d+)\]\]/g, (m,n) => (v[n-1] && v[n-1].trim()) ? v[n-1].trim() : "____");
 }
-function traceText(t){
+function traceText(t, solved){
   const v = state.trace[t.id] || [];
   let k = 0;
-  const rows = [t.columns].concat(t.colCode ? [t.colCode] : [], t.rows.map(r => r.map(c => typeof c === "object" ? (v[k++] || "____") : c)));
+  const rows = [t.columns].concat(t.colCode ? [t.colCode] : [], t.rows.map(r => r.map(c => typeof c === "object" ? (solved ? c.a : (v[k++] || "____")) : c)));
   const w = t.columns.map((_, i) => Math.max(...rows.map(r => String(r[i]).length)));
   return rows.map(r => r.map((c,i) => String(c).padEnd(w[i])).join(" | ")).join("\n");
 }
 
-function pdfTask(doc, t){
-  const done = !!state.done[t.id];
-  doc.gap(6);
-  const label = isViewed(t) ? "   [Lösung angesehen]" : done ? "   [selbst gelöst]" : "   [offen]";
-  doc.line(t.id + "  " + t.title + label, 2, 11, { color: isViewed(t) ? "0.65 0.4 0 rg" : done ? "0.05 0.45 0.3 rg" : "0.7 0.15 0.12 rg" });
-  promptParts(t.prompt.replace(/<div><b>(.*?)<\/b><pre class="code">/g, '<pre class="code">[$1]\n').replace(/<div class="io">|<\/div>/g, "").replace(/<br>/g, " ").replace(/<li>/g, "<li> - ")).forEach(p => p.code != null ? doc.code(p.code) : doc.para(p.text, 10, false));
-  if (t.type === "mc"){
-    if (t.code) doc.code(t.code);
-    doc.line("Meine Antwort:", 2, 9);
-    doc.code(done ? t.options.find(o => o.ok).t : "(noch nicht richtig beantwortet)");
-  } else if (t.type === "fill"){
-    doc.line("Mein Lückencode:", 2, 9);
-    doc.code(done ? t.template.replace(/\[\[(\d+)\]\]/g, (m,n) => t.answers[n-1][0]) : filledTemplate(t));
-  } else if (t.type === "trace"){
-    doc.code(t.code);
-    doc.line("Meine Tabelle:", 2, 9);
-    doc.code(traceText(t));
-  } else if (t.type === "order"){
-    doc.line("Meine Anordnung:", 2, 9);
-    const arr = done ? t.lines.map((l,i) => ({ i, ind:l[1] })) : state.order[t.id];
-    doc.code(arr ? orderText(t, arr) : "(noch nicht bearbeitet)");
-  } else if (t.type === "pick"){
-    doc.line("Meine Auswahl:", 2, 9);
-    doc.code(t.items.map((it,r) => {
-      const v = done ? it.a : ((state.pick[t.id] || [])[r] || []);
-      return it.expr.padEnd(18) + " -> " + (v.length ? v.slice().sort((a,b) => a - b).join(", ") : "(nichts gewählt)");
-    }).join("\n"));
-  } else {
-    doc.line("Mein Programm:", 2, 9);
-    doc.code(currentCode(t));
-  }
-}
-
-// Höhe eines Blocks messen, damit Überschrift und Aufgabe nicht getrennt werden
-function pdfHeight(fn){
+// Höhe eines Blocks messen, damit Überschrift und Kasten nicht getrennt werden
+function pdfHeight(doc, fn){
   const d = new PdfDoc();
-  d.H = 1e6; d.y = 1e6;
+  d.L = doc.L; d.R = doc.R;
+  d.top = d.y = 1e6; d.bottom = -1e6;
   fn(d);
   return 1e6 - d.y;
 }
 function pdfKeep(doc, fn){
-  const h = pdfHeight(fn);
-  if (h < doc.H - 2 * doc.M - 14) doc.need(h);
+  const h = pdfHeight(doc, fn);
+  if (h <= doc.top - doc.bottom) doc.need(h);
   fn(doc);
+}
+
+/* Merkwissen: stammt direkt aus den Erklärkästen der Seite */
+const pdfText = s => String(s).replace(/[☀-➿]/g, "").replace(/\s+/g, " ").trim();
+const WHILE_EXAMPLE = 'zaehler = 1\nwhile zaehler <= 3:\n    print("Runde", zaehler)\n    zaehler = zaehler + 1';
+
+// Tabelle als Textblock in Schreibmaschinenschrift
+function pdfTable(table){
+  const rows = [...table.rows].map(r => [...r.cells].map(c => pdfText(c.textContent)));
+  rows[0] = rows[0].map(head => head.split(":")[0]);
+  const widths = rows[0].map((_, column) => Math.max(...rows.map(r => r[column].length)));
+  return rows.map(r => r.map((cell, column) => cell.padEnd(widths[column])).join(" | ").trimEnd()).join("\n");
+}
+
+function pdfElement(doc, el){
+  if (el.tagName === "H3" || el.matches(".legend")) return;   // Überschrift steht im Kastentitel, die Legende erklärt nur Farben
+  const table = el.querySelector("table");
+  if (table) doc.code(pdfTable(table), INK.white);
+  else if (el.tagName === "PRE") doc.code(el.textContent, INK.white);
+  else if (el.tagName === "UL" || el.tagName === "OL")
+    [...el.children].forEach((item, i) => doc.item(el.tagName === "OL" ? (i + 1) + "." : "•", pdfText(item.textContent)));
+  else if (el.matches(".rangeex")) doc.item("•", pdfText(el.firstElementChild.textContent) + " " + pdfText(el.lastElementChild.textContent));
+  else if (el.matches(".compare")) [...el.children].forEach(part => { doc.label(pdfText($("b", part).textContent)); doc.code($("pre", part).textContent, INK.white); });
+  else doc.para(pdfText(el.textContent), 11);
+}
+
+function pdfKnowledge(doc){
+  const merke = { stripe:INK.green, fill:INK.box, color:INK.green, sym:"4" };
+  const warn = { stripe:INK.red, fill:INK.box, color:INK.red };
+  pdfKeep(doc, d => {
+    d.heading("Auf einen Blick: das Merkwissen");
+    d.box(Object.assign({ title:"So läuft eine while-Schleife" }, merke), b => {
+      b.para(pdfText($("#c-anim + p.lead").textContent), 11);
+      document.querySelectorAll(".trio .ing").forEach(part => {
+        const name = $("b", part).textContent;
+        b.label(name);
+        b.para(pdfText(part.textContent.slice(part.textContent.indexOf(name) + name.length)), 11);
+      });
+      b.code(WHILE_EXAMPLE, INK.white);
+    });
+  });
+  // NOTES enthält die Kästen auch dann noch, wenn die Seite sie zu den Aufgaben verschoben hat
+  NOTES.filter(note => note.matches(".merke, .warnbox")).forEach(note => {
+    const warning = note.matches(".warnbox");
+    const title = (warning ? "Achtung: " : "") + pdfText($("h3", note).textContent);
+    pdfKeep(doc, d => d.box(Object.assign({ title }, warning ? warn : merke), b => [...note.children].forEach(el => pdfElement(b, el))));
+  });
+}
+
+/* Aufgaben */
+const pdfStatus = t => isViewed(t) ? "Lösung angesehen" : state.done[t.id] ? "selbst gelöst" : "offen";
+
+function pdfPrompt(doc, t){
+  const html = t.prompt.replace(/<div><b>(.*?)<\/b><pre class="code">/g, '<pre class="code">[$1]\n').replace(/<div class="io">|<\/div>/g, "")
+    .replace(/<br>/g, "\n").replace(/<li>/g, "\n• ").replace(/<\/(ol|ul)>/g, "</$1>\n");
+  promptParts(html).forEach(part => part.code != null ? doc.code(part.code) : doc.para(part.text, 11));
+}
+
+// Zahlen in der Reihenfolge, in der range sie liefert: bei negativem Schritt abwärts
+const pickText = (t, values, empty) => t.items.map((it, r) => {
+  const v = values(r), down = /,\s*-\d+\s*\)/.test(it.expr);
+  return it.expr.padEnd(18) + " -> " + (v.length ? v.slice().sort((a, b) => down ? b - a : a - b).join(", ") : empty);
+}).join("\n");
+
+// Die richtige Antwort einer Aufgabe
+function pdfSolution(doc, t){
+  if (t.type === "mc"){ doc.label("Richtige Antwort"); doc.code(t.options.find(o => o.ok).t); }
+  else if (t.type === "fill"){ doc.label("Vollständiger Lückencode"); doc.code(t.template.replace(/\[\[(\d+)\]\]/g, (m, n) => t.answers[n - 1][0])); }
+  else if (t.type === "trace"){ doc.label("Ausgefüllte Tabelle"); doc.code(traceText(t, true)); }
+  else if (t.type === "order"){ doc.label("Richtige Anordnung"); doc.code(orderText(t, t.lines.map((l, i) => ({ i, ind:l[1] })))); }
+  else if (t.type === "pick"){ doc.label("Richtige Auswahl"); doc.code(pickText(t, r => t.items[r].a, "(keine Zahl)")); }
+  else { doc.label("Musterlösung"); doc.code(t.solution); }
+}
+
+function pdfExplain(doc, t){
+  if (!t.explain) return;
+  doc.label("Merke", INK.green);
+  doc.para(t.explain, 11);
+}
+
+function pdfSolved(doc, t){
+  if (t.type === "code"){
+    const passed = state.passed[t.id], now = currentCode(t);
+    doc.label(passed != null ? "Mein Programm (bestandene Fassung)" : "Mein Programm (aktueller Stand)");
+    doc.code(passed != null ? passed : now);
+    if (passed != null && passed.trim() !== now.trim())
+      doc.note("Im Programmfeld steht inzwischen ein anderer Code. Gedruckt ist die Fassung, die alle Tests bestanden hat.");
+  } else pdfSolution(doc, t);
+  pdfExplain(doc, t);
+}
+
+// Noch nicht gelöst: nur der eigene Stand, keine Lösung
+function pdfOpen(doc, t){
+  if (t.type === "fill"){ doc.label("Mein Stand (noch offen)"); doc.code(filledTemplate(t)); }
+  else if (t.type === "trace"){ doc.label("Mein Stand (noch offen)"); doc.code(traceText(t)); }
+  else if (t.type === "order" && state.order[t.id]){ doc.label("Mein Stand (noch offen)"); doc.code(orderText(t, state.order[t.id])); }
+  else if (t.type === "pick" && state.pick[t.id]){ doc.label("Mein Stand (noch offen)"); doc.code(pickText(t, r => state.pick[t.id][r] || [], "(nichts gewählt)")); }
+  else if (t.type === "code" && currentCode(t).trim() !== t.starter.trim()){ doc.label("Mein Versuch (noch nicht bestanden)"); doc.code(currentCode(t)); }
+  else doc.label("Noch offen");
+}
+
+function pdfTask(doc, t){
+  doc.box({ bar:INK.blue, barTitle:t.id + "  " + t.title, right:pdfStatus(t), stripe:INK.blue }, b => {
+    pdfPrompt(b, t);
+    if (t.code && (t.type === "mc" || t.type === "trace")) b.code(t.code);
+    if (state.done[t.id]) pdfSolved(b, t);
+    else {
+      pdfOpen(b, t);
+      if (isViewed(t)) b.note("Sie haben die Lösung angesehen. Sie steht im Abschnitt „Lösungen“ am Ende.");
+    }
+  });
+}
+
+// Logo aus der Seitenleiste als JPEG, damit es ohne Hilfsbibliothek in die PDF passt
+function pdfLogo(){
+  try {
+    const img = $(".logo img");
+    if (!img || !img.naturalWidth) return null;
+    const canvas = document.createElement("canvas");
+    canvas.width = img.naturalWidth; canvas.height = img.naturalHeight;
+    const ctx = canvas.getContext("2d");
+    ctx.fillStyle = "#ffffff"; ctx.fillRect(0, 0, canvas.width, canvas.height); ctx.drawImage(img, 0, 0);
+    return { w:canvas.width, h:canvas.height, data:atob(canvas.toDataURL("image/jpeg", 0.92).split(",")[1]) };
+  } catch(e){ return null; }
 }
 
 function buildPdf(){
   const doc = new PdfDoc();
   const p = progressCount();
   const sc = checkScore();
-  doc.line("Python-Übungen: Schleifen mit while und for", 2, 16);
-  doc.line("Name: " + (state.student.name || "-") + "     Klasse/Kurs: " + (state.student.klasse || "-"), 1, 10);
-  doc.line("Stand: " + dateDE() + "     Pflichtaufgaben selbst gelöst: " + p.solved + " von " + p.total + "     Lösung angesehen: " + p.viewed, 1, 10);
-  doc.line("Weg: " + (state.path === "P" ? "Profi" : state.path === "B" ? "Training" : "noch nicht gewählt") + "     Kurz-Check: " + (sc.answered ? sc.right + " von " + CHECK.length + " richtig" : "nicht bearbeitet"), 1, 10);
+  doc.line("Python-Übungen: Schleifen mit while und for", 2, 17, { color:INK.petrol });
+  [ "Name: " + (state.student.name || "-") + "  ·  Stand: " + dateDE(),
+    "Pflichtaufgaben selbst gelöst: " + p.solved + " von " + p.total + "  ·  Lösung angesehen: " + p.viewed,
+    "Weg: " + (state.path === "P" ? "Profi" : state.path === "B" ? "Training" : "noch nicht gewählt") + "  ·  Kurz-Check: " + (sc.answered ? sc.right + " von " + CHECK.length + " richtig" : "nicht bearbeitet")
+  ].forEach(text => doc.para(text, 9.5, false, INK.grey));
   doc.gap(6);
+  doc.box({ title:"Lernziel", stripe:INK.petrol, fill:INK.box, color:INK.petrol }, b => b.para(pdfText($("#start p").textContent), 11));
+  pdfKnowledge(doc);
+  doc.chapter("Meine Aufgaben");
   STAGES.forEach(s => {
     const list = TASKS.filter(t => t.stage === s.id);
     if ((s.optional || (s.path && s.path !== state.path)) && !list.some(t => state.done[t.id] || state.shown[t.id] || state.code[t.id] || state.fill[t.id] || state.order[t.id])) return;
     list.forEach((t, i) => pdfKeep(doc, d => {
-      if (i === 0){ d.gap(10); d.line(s.nr + "  " + s.title, 2, 13); d.rule(); }
+      if (i === 0) d.heading(s.nr + "  " + s.title);
       pdfTask(d, t);
     }));
   });
-  return doc.build("Python-Übungen Schleifen" + (state.student.name ? " - " + state.student.name : ""));
+  // Angesehene, noch nicht selbst gelöste Aufgaben: Lösungen getrennt am Ende
+  const viewed = TASKS.filter(t => isViewed(t) && !state.done[t.id]);
+  if (viewed.length){
+    doc.chapter("Lösungen");
+    doc.para("Lösen Sie die Aufgabe zuerst noch einmal selbst, bevor Sie hier nachlesen.", 11);
+    doc.gap(6);
+    viewed.forEach(t => pdfKeep(doc, d => d.box({ title:t.id + "  " + t.title, stripe:INK.green, fill:INK.box, color:INK.green, sym:"4" }, b => {
+      pdfSolution(b, t);
+      pdfExplain(b, t);
+    })));
+  }
+  return doc.build({ head1:"Informatik · Python: Schleifen", head2:[state.student.name, state.student.klasse ? "Klasse/Kurs: " + state.student.klasse : ""].filter(Boolean).join("  ·  "),
+    foot:"Quelle: eigenes Unterrichtsmaterial, Berufskolleg Witten", logo:pdfLogo() });
 }
 
 function fileBase(){
@@ -4227,7 +4442,7 @@ function setupSaveDialog(){
   const open = () => {
     nameI.value = state.student.name; klasseI.value = state.student.klasse;
     const p = progressCount();
-    $("#sv-info").textContent = "Selbst gelöst: " + p.solved + " von " + p.total + ", Lösung angesehen: " + p.viewed + ". Offene Aufgaben erscheinen im Bericht mit Ihrem aktuellen Stand.";
+    $("#sv-info").textContent = "Selbst gelöst: " + p.solved + " von " + p.total + ", Lösung angesehen: " + p.viewed + ". Der Bericht beginnt mit dem Merkwissen. Danach folgen Ihre Aufgaben mit Lösungen und Erklärungen, offene Aufgaben mit Ihrem aktuellen Stand.";
     refresh();
     if (dlg.showModal) dlg.showModal(); else dlg.setAttribute("open", "");
     nameI.focus();
